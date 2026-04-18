@@ -1,0 +1,13 @@
+{
+  "name": "hunt",
+  "version": "1.0.0",
+  "description": "Daily job search across ATS platforms",
+  "type": "module",
+  "scripts": {
+    "hunt": "node src/hunt.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.4",
+    "nodemailer": "^6.10.1"
+  }
+}
