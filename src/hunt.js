@@ -1,6 +1,6 @@
 import { KEYWORDS } from './config.js';
 import { searchJobs } from './search.js';
-import { upsertJobs, getNewJobs } from './db.js';
+import { upsertJobs, getNewJobs, deleteStaleJobs } from './db.js';
 import { sendReport } from './notify.js';
 
 async function run() {
@@ -23,6 +23,9 @@ async function run() {
   } else {
     console.log(`[hunt] No new jobs — skipping email`);
   }
+
+  const purged = await deleteStaleJobs();
+  console.log(`[hunt] Purged ${purged} stale jobs (>7 days)`);
 
   console.log(`[hunt] Done`);
 }

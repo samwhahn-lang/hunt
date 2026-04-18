@@ -20,6 +20,16 @@ export async function upsertJobs(jobs) {
   if (error) throw new Error(`Supabase upsert error: ${error.message}`);
 }
 
+export async function deleteStaleJobs() {
+  const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const { error, count } = await client()
+    .from('jobs')
+    .delete({ count: 'exact' })
+    .lt('first_seen_at', cutoff);
+  if (error) throw new Error(`Supabase delete error: ${error.message}`);
+  return count ?? 0;
+}
+
 // Returns jobs first seen in the last 25 hours (buffer for cron timing drift)
 export async function getNewJobs() {
   const since = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString();
