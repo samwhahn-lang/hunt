@@ -16,7 +16,7 @@ export async function upsertJobs(jobs) {
   if (!jobs.length) return;
   const { error } = await client()
     .from('jobs')
-    .upsert(jobs, { onConflict: 'id', ignoreDuplicates: true });
+    .upsert(jobs, { onConflict: 'id' });
   if (error) throw new Error(`Supabase upsert error: ${error.message}`);
 }
 
