@@ -7,7 +7,6 @@
     "hunt": "node src/hunt.js"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.49.4",
-    "nodemailer": "^6.10.1"
+    "@supabase/supabase-js": "^2.49.4"
   }
 }

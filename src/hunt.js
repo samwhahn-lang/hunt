@@ -1,7 +1,7 @@
 import { KEYWORDS } from './config.js';
 import { searchJobs } from './search.js';
-import { upsertJobs, getNewJobs, deleteStaleJobs } from './db.js';
-import { sendReport } from './notify.js';
+import { upsertJobs, getAllJobs, deleteStaleJobs } from './db.js';
+import { renderPage } from './render.js';
 
 async function run() {
   console.log(`[hunt] Starting — ${new Date().toISOString()}`);
@@ -14,15 +14,11 @@ async function run() {
     await upsertJobs(jobs);
   }
 
-  const newJobs = await getNewJobs();
-  console.log(`[hunt] New since last run: ${newJobs.length}`);
+  const allJobs = await getAllJobs();
+  console.log(`[hunt] Total in DB: ${allJobs.length}`);
 
-  if (newJobs.length > 0) {
-    await sendReport(newJobs);
-    console.log(`[hunt] Email sent`);
-  } else {
-    console.log(`[hunt] No new jobs — skipping email`);
-  }
+  renderPage(allJobs);
+  console.log(`[hunt] index.html written`);
 
   const purged = await deleteStaleJobs();
   console.log(`[hunt] Purged ${purged} stale jobs (>7 days)`);

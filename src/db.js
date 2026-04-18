@@ -30,15 +30,11 @@ export async function deleteStaleJobs() {
   return count ?? 0;
 }
 
-// Returns jobs first seen in the last 25 hours (buffer for cron timing drift)
-export async function getNewJobs() {
-  const since = new Date(Date.now() - 25 * 60 * 60 * 1000).toISOString();
+export async function getAllJobs() {
   const { data, error } = await client()
     .from('jobs')
     .select('*')
-    .gte('first_seen_at', since)
-    .order('keyword')
-    .order('company');
+    .order('first_seen_at', { ascending: false });
   if (error) throw new Error(`Supabase select error: ${error.message}`);
   return data;
 }
