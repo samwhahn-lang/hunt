@@ -13,6 +13,23 @@ function matchesLocation(job) {
   return LOCATION_FILTER.some(term => loc.includes(term));
 }
 
+function parsePostedOn(postedOn) {
+  if (!postedOn) return null;
+  const s = postedOn.toLowerCase();
+  const now = new Date();
+  if (s.includes('today')) return now.toISOString();
+  if (s.includes('yesterday')) {
+    now.setDate(now.getDate() - 1);
+    return now.toISOString();
+  }
+  const match = s.match(/(\d+)\+?\s+day/);
+  if (match) {
+    now.setDate(now.getDate() - parseInt(match[1], 10));
+    return now.toISOString();
+  }
+  return null;
+}
+
 function normalize(job, company, keyword) {
   const loc = job.locationsText ?? '';
   const isRemote = loc.toLowerCase().includes('remote');
@@ -24,7 +41,7 @@ function normalize(job, company, keyword) {
     city,
     remote: isRemote,
     url: jobUrl(company, job.externalPath),
-    posted_at: null,
+    posted_at: parsePostedOn(job.postedOn),
     keyword,
   };
 }

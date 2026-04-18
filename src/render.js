@@ -50,7 +50,14 @@ export function renderPage(jobs, outPath = 'index.html') {
 
   const sections = Object.entries(byKeyword)
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([kw, kwJobs]) => section(kw, kwJobs))
+    .map(([kw, kwJobs]) => {
+      const sorted = [...kwJobs].sort((a, b) => {
+        const ta = a.posted_at ? new Date(a.posted_at).getTime() : 0;
+        const tb = b.posted_at ? new Date(b.posted_at).getTime() : 0;
+        return tb - ta;
+      });
+      return section(kw, sorted);
+    })
     .join('');
 
   const totalNew = jobs.filter(isNew).length;
