@@ -74,6 +74,10 @@ async function searchCompany(company, keyword) {
     const postings = data.jobPostings ?? [];
     if (!postings.length) break;
 
+    if (offset === 0 && postings.length > 0) {
+      console.log(`[search] ${company.name} sample postedOn: "${postings[0].postedOn}" | keys: ${Object.keys(postings[0]).join(', ')}`);
+    }
+
     for (const job of postings) {
       if (matchesLocation(job)) {
         results.push(normalize(job, company, keyword));
