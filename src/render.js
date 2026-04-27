@@ -1,4 +1,5 @@
 import { writeFileSync } from 'fs';
+import { COMPANIES } from './config.js';
 
 const NEW_THRESHOLD_MS = 25 * 60 * 60 * 1000;
 
@@ -86,6 +87,7 @@ export function renderPage(jobs, outPath = 'index.html') {
     a:hover { text-decoration: underline; }
     .badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; padding: 2px 6px; border-radius: 4px; background: #e6f0ff; color: #0055bb; margin-left: 8px; vertical-align: middle; }
     .muted { color: #999; }
+    footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #eee; }
     @media (max-width: 600px) { th:nth-child(3), td:nth-child(3), th:nth-child(4), td:nth-child(4) { display: none; } }
   </style>
 </head>
@@ -95,6 +97,9 @@ export function renderPage(jobs, outPath = 'index.html') {
     <p class="meta">Updated ${updated} &middot; ${jobs.length} total &middot; ${totalNew} new today &middot; last 7 days</p>
   </header>
   ${sections || '<p class="muted">No results yet.</p>'}
+  <footer>
+    <p class="meta">Searching ${COMPANIES.length} firms: ${COMPANIES.map(c => c.name).join(', ')}</p>
+  </footer>
 </body>
 </html>`;
 
