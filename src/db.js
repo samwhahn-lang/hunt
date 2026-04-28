@@ -21,7 +21,7 @@ export async function upsertJobs(jobs) {
 }
 
 export async function deleteStaleJobs() {
-  const cutoff = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+  const cutoff = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
   const { error, count } = await client()
     .from('jobs')
     .delete({ count: 'exact' })

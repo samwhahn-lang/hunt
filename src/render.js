@@ -12,9 +12,7 @@ function jobRow(job) {
   const posted = job.posted_at
     ? new Date(job.posted_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
     : '—';
-  const newBadge = isNew(job)
-    ? '<span class="badge">NEW</span>'
-    : '';
+  const newBadge = isNew(job) ? '<span class="badge">NEW</span>' : '';
   return `
     <tr>
       <td><a href="${job.url ?? '#'}" target="_blank" rel="noopener">${job.title}</a>${newBadge}</td>
@@ -37,7 +35,7 @@ function section(keyword, jobs) {
     </section>`;
 }
 
-export function renderPage(jobs, outPath = 'index.html') {
+export function renderPage(jobs, noResults = [], outPath = 'index.html') {
   const updated = new Date().toLocaleString('en-US', {
     timeZone: 'America/New_York',
     weekday: 'short', month: 'short', day: 'numeric',
@@ -63,6 +61,14 @@ export function renderPage(jobs, outPath = 'index.html') {
 
   const totalNew = jobs.filter(isNew).length;
 
+  const workdayFirms = COMPANIES.filter(c => c.platform === 'workday').map(c => c.name);
+  const ghFirms = COMPANIES.filter(c => c.platform === 'greenhouse').map(c => c.name);
+
+  const noResultsBlock = noResults.length > 0 ? `
+    <div class="no-results">
+      <p class="meta"><strong>No matching results:</strong> ${noResults.join(', ')}</p>
+    </div>` : '';
+
   const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -87,18 +93,29 @@ export function renderPage(jobs, outPath = 'index.html') {
     a:hover { text-decoration: underline; }
     .badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.3px; padding: 2px 6px; border-radius: 4px; background: #e6f0ff; color: #0055bb; margin-left: 8px; vertical-align: middle; }
     .muted { color: #999; }
-    footer { margin-top: 40px; padding-top: 16px; border-top: 1px solid #eee; }
-    @media (max-width: 600px) { th:nth-child(3), td:nth-child(3), th:nth-child(4), td:nth-child(4) { display: none; } }
+    .no-results { margin-bottom: 32px; padding: 12px 16px; background: #fff8e6; border-radius: 8px; border: 1px solid #ffe0a0; }
+    footer { margin-top: 48px; padding-top: 20px; border-top: 1px solid #eee; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .firm-group h3 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.4px; color: #555; margin-bottom: 6px; }
+    .firm-list { font-size: 12px; color: #888; line-height: 1.8; }
+    @media (max-width: 600px) { th:nth-child(3), td:nth-child(3), th:nth-child(4), td:nth-child(4) { display: none; } footer { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
   <header>
     <h1>Hunt</h1>
-    <p class="meta">Updated ${updated} &middot; ${jobs.length} total &middot; ${totalNew} new today &middot; last 7 days</p>
+    <p class="meta">Updated ${updated} &middot; ${jobs.length} total &middot; ${totalNew} new today &middot; last 30 days</p>
   </header>
+  ${noResultsBlock}
   ${sections || '<p class="muted">No results yet.</p>'}
   <footer>
-    <p class="meta">Searching ${COMPANIES.length} firms: ${COMPANIES.map(c => c.name).join(', ')}</p>
+    <div class="firm-group">
+      <h3>Workday (${workdayFirms.length} firms)</h3>
+      <p class="firm-list">${workdayFirms.join('<br>')}</p>
+    </div>
+    <div class="firm-group">
+      <h3>Greenhouse (${ghFirms.length} firms)</h3>
+      <p class="firm-list">${ghFirms.join('<br>')}</p>
+    </div>
   </footer>
 </body>
 </html>`;
